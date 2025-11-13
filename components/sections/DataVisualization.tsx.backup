@@ -1,0 +1,676 @@
+'use client';
+
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Area, AreaChart
+} from 'recharts';
+import {
+  trafficStats, vehicleData, timeDistribution,
+  techParks, emissionData, routeOptimization,
+  infrastructureProjects, shuttleMarket, successModels
+} from '@/lib/data/trafficData';
+
+export default function DataVisualization() {
+  const [selectedMetric, setSelectedMetric] = useState('time');
+
+  // Prepare data for vehicle growth chart
+  const vehicleGrowthData = [
+    { year: '2020', cars: vehicleData.cars[2020] / 1000000, twoWheelers: vehicleData.twoWheelers[2020] / 1000000 },
+    { year: '2021', cars: 2.15, twoWheelers: 7.0 },
+    { year: '2022', cars: 2.25, twoWheelers: 7.4 },
+    { year: '2023', cars: 2.35, twoWheelers: 7.8 },
+    { year: '2024', cars: 2.45, twoWheelers: 8.1 },
+    { year: '2025', cars: vehicleData.cars[2025] / 1000000, twoWheelers: vehicleData.twoWheelers[2025] / 1000000 },
+  ];
+
+  // Tech park employee distribution
+  const techParkPieData = techParks.map(park => ({
+    name: park.name,
+    value: park.employees,
+    companies: park.companies,
+  }));
+
+  // Colors for pie chart
+  const COLORS = ['#6B46C1', '#003366', '#0066CC', '#4B0082', '#764ba2'];
+
+  // Emission reduction data
+  const emissionComparisonData = [
+    { category: 'Current', emissions: emissionData.currentDailyEmissions, color: '#FF4444' },
+    { category: 'With Bus System', emissions: emissionData.projectedWithBuses, color: '#44FF44' },
+  ];
+
+  // Route optimization radar data
+  const radarData = routeOptimization.majorCorridors.map(corridor => ({
+    route: corridor.name.split(' - ')[0],
+    current: corridor.currentTime,
+    optimized: corridor.optimizedTime,
+  }));
+
+  return (
+    <section id="data" className="py-20 relative">
+      <div className="max-w-7xl mx-auto px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">
+            <span className="text-gradient">The Data</span> Tells the Story
+          </h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Real-time statistics revealing the magnitude of Bangalore's traffic crisis and the potential impact of our solution
+          </p>
+        </motion.div>
+
+        {/* Metric Selector */}
+        <div className="flex justify-center mb-12">
+          <div className="glass-effect rounded-full p-2 flex gap-2 flex-wrap justify-center">
+            {['statistics', 'time', 'vehicles', 'emissions', 'routes'].map((metric) => (
+              <button
+                key={metric}
+                onClick={() => setSelectedMetric(metric)}
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  selectedMetric === metric
+                    ? 'bg-gradient-to-r from-tech-purple to-bangalore-blue text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                {metric.charAt(0).toUpperCase() + metric.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* 2024-2025 Key Statistics */}
+          {selectedMetric === 'statistics' && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">2024-2025 Traffic Crisis</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-red-500/10 rounded-lg">
+                    <span className="text-gray-300">Global Traffic Rank</span>
+                    <span className="text-2xl font-bold text-red-400">#3 Worst</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-orange-500/10 rounded-lg">
+                    <span className="text-gray-300">Economic Loss</span>
+                    <span className="text-2xl font-bold text-orange-400">₹20,000 Cr</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-yellow-500/10 rounded-lg">
+                    <span className="text-gray-300">Time for 10km</span>
+                    <span className="text-2xl font-bold text-yellow-400">34.17 min</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-purple-500/10 rounded-lg">
+                    <span className="text-gray-300">Total Vehicles</span>
+                    <span className="text-2xl font-bold text-purple-400">11.8M</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-500/10 rounded-lg">
+                    <span className="text-gray-300">Daily Fuel Waste</span>
+                    <span className="text-2xl font-bold text-blue-400">2.8M liters</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg">
+                    <span className="text-gray-300">Vehicle Growth</span>
+                    <span className="text-2xl font-bold text-green-400">12% vs 7%</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">Proven Solutions</h3>
+                <div className="space-y-4">
+                  <div className="p-4 bg-gradient-to-r from-green-500/10 to-transparent rounded-xl">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-lg font-semibold text-green-400">MoveInSync</h4>
+                      <span className="text-xs bg-green-500/20 px-2 py-1 rounded text-green-400">Active</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-gray-400">Daily Users:</span>
+                        <span className="text-white font-bold ml-1">1M+</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">Vehicles:</span>
+                        <span className="text-white font-bold ml-1">7,200</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">Clients:</span>
+                        <span className="text-white font-bold ml-1">400+</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">Cost/User:</span>
+                        <span className="text-white font-bold ml-1">₹280/mo</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gradient-to-r from-blue-500/10 to-transparent rounded-xl">
+                    <h4 className="text-lg font-semibold text-blue-400 mb-2">ORR Corridor Impact</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Daily Commuters:</span>
+                        <span className="text-white font-bold">640,000</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">IT Revenue Share:</span>
+                        <span className="text-white font-bold">32%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Annual Revenue:</span>
+                        <span className="text-white font-bold">$22B</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gradient-to-r from-purple-500/10 to-transparent rounded-xl">
+                    <h4 className="text-lg font-semibold text-purple-400 mb-2">Market Growth</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">India CAGR:</span>
+                        <span className="text-white font-bold">8.2%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">2030 Market:</span>
+                        <span className="text-white font-bold">$52.11B</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+          {/* Traffic Distribution Chart */}
+          {selectedMetric === 'time' && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">Daily Traffic Pattern</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={timeDistribution}>
+                    <defs>
+                      <linearGradient id="colorTraffic" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#FF4444" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#FF4444" stopOpacity={0.1}/>
+                      </linearGradient>
+                      <linearGradient id="colorOptimal" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#44FF44" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#44FF44" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                    <XAxis dataKey="hour" stroke="#888" />
+                    <YAxis stroke="#888" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #6366f1',
+                        color: '#1f2937'
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="traffic"
+                      stroke="#FF4444"
+                      fillOpacity={1}
+                      fill="url(#colorTraffic)"
+                      name="Current Traffic"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="optimal"
+                      stroke="#44FF44"
+                      fillOpacity={1}
+                      fill="url(#colorOptimal)"
+                      name="With Bus System"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+                <div className="mt-4 text-sm text-gray-400">
+                  Peak hours show {Math.round((95 - 40) / 95 * 100)}% potential reduction in congestion
+                </div>
+              </motion.div>
+
+              {/* Speed Comparison */}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">Average Speed Comparison</h3>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-400">Current Rush Hour</span>
+                      <span className="text-traffic-red font-bold">{trafficStats.avgSpeed} km/h</span>
+                    </div>
+                    <div className="w-full bg-gray-800 rounded-full h-4">
+                      <div
+                        className="bg-gradient-to-r from-red-600 to-red-400 h-full rounded-full"
+                        style={{ width: `${(trafficStats.avgSpeed / 60) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-400">With Bus Priority Lanes</span>
+                      <span className="text-traffic-green font-bold">35 km/h</span>
+                    </div>
+                    <div className="w-full bg-gray-800 rounded-full h-4">
+                      <div
+                        className="bg-gradient-to-r from-green-600 to-green-400 h-full rounded-full"
+                        style={{ width: `${(35 / 60) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-gray-400">Global Average</span>
+                      <span className="text-blue-400 font-bold">45 km/h</span>
+                    </div>
+                    <div className="w-full bg-gray-800 rounded-full h-4">
+                      <div
+                        className="bg-gradient-to-r from-blue-600 to-blue-400 h-full rounded-full"
+                        style={{ width: `${(45 / 60) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                  <p className="text-green-400 text-sm">
+                    <span className="font-bold">94% improvement</span> in average speed during peak hours
+                  </p>
+                </div>
+              </motion.div>
+            </>
+          )}
+
+          {/* Vehicle Growth Chart */}
+          {selectedMetric === 'vehicles' && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">Vehicle Growth Explosion</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={vehicleGrowthData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                    <XAxis dataKey="year" stroke="#888" />
+                    <YAxis stroke="#888" label={{ value: 'Millions', angle: -90, position: 'insideLeft', style: { fill: '#888' } }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #6366f1',
+                        color: '#1f2937'
+                      }}
+                    />
+                    <Bar dataKey="cars" fill="#6B46C1" name="Cars" />
+                    <Bar dataKey="twoWheelers" fill="#003366" name="Two-Wheelers" />
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                  <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                    <span className="text-purple-400 font-bold">27.5%</span>
+                    <span className="text-gray-400"> increase in cars</span>
+                  </div>
+                  <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                    <span className="text-blue-400 font-bold">23.9%</span>
+                    <span className="text-gray-400"> increase in two-wheelers</span>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Tech Parks Distribution */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">IT Workforce Distribution</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={techParkPieData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={(entry) => {
+                        if (!entry) return '';
+                        const { name, percent } = entry;
+                        return `${name || ''}: ${((percent || 0) * 100).toFixed(0)}%`;
+                      }}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {techParkPieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #6366f1',
+                        color: '#1f2937'
+                      }}
+                      formatter={(value: any) => `${(value / 1000).toFixed(0)}K employees`}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="mt-4 text-center">
+                  <p className="text-2xl font-bold text-white">4,500,000</p>
+                  <p className="text-gray-400">Total IT-BPM Professionals</p>
+                  <p className="text-tech-purple text-sm mt-2">ORR alone: 640,000 daily commuters</p>
+                  <p className="text-green-400 text-xs mt-1">MoveInSync already serves 1M+ daily</p>
+                </div>
+              </motion.div>
+            </>
+          )}
+
+          {/* Emissions Chart - Redesigned */}
+          {selectedMetric === 'emissions' && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="relative overflow-hidden"
+              >
+                {/* Header Section with Gradient Background */}
+                <div className="relative bg-gradient-to-br from-emerald-500/20 via-green-500/10 to-transparent rounded-3xl p-8 border border-emerald-500/20">
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-emerald-600/5 animate-pulse" />
+
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-8">
+                      <div className="p-3 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl shadow-lg">
+                        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-3xl font-bold text-white">CO₂ Emissions Impact</h3>
+                        <p className="text-emerald-400">Environmental transformation through smart transit</p>
+                      </div>
+                    </div>
+
+                    {/* Visual Comparison with Animated Bars */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                      {/* Current Emissions */}
+                      <div className="relative">
+                        <div className="flex justify-between items-end mb-2">
+                          <span className="text-sm font-medium text-gray-400">Current Daily Emissions</span>
+                          <span className="text-2xl font-bold text-red-400">15,000 tons</span>
+                        </div>
+                        <div className="relative h-12 bg-gray-800/50 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: '100%' }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            className="absolute inset-y-0 left-0 bg-gradient-to-r from-red-500 to-orange-500 rounded-full"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-white font-semibold text-sm">100% Current Load</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* With Bus System */}
+                      <div className="relative">
+                        <div className="flex justify-between items-end mb-2">
+                          <span className="text-sm font-medium text-gray-400">With Smart Bus System</span>
+                          <span className="text-2xl font-bold text-emerald-400">9,500 tons</span>
+                        </div>
+                        <div className="relative h-12 bg-gray-800/50 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: '63%' }}
+                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+                            className="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-white font-semibold text-sm">37% Reduction</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Circular Progress Indicator */}
+                    <div className="flex justify-center mb-8">
+                      <div className="relative">
+                        <svg className="w-48 h-48 transform -rotate-90">
+                          <circle
+                            cx="96"
+                            cy="96"
+                            r="80"
+                            stroke="currentColor"
+                            strokeWidth="12"
+                            fill="none"
+                            className="text-gray-700"
+                          />
+                          <motion.circle
+                            cx="96"
+                            cy="96"
+                            r="80"
+                            stroke="url(#gradient)"
+                            strokeWidth="12"
+                            fill="none"
+                            strokeDasharray={502}
+                            initial={{ strokeDashoffset: 502 }}
+                            animate={{ strokeDashoffset: 316 }}
+                            transition={{ duration: 2, ease: "easeInOut" }}
+                            strokeLinecap="round"
+                          />
+                          <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#10b981" />
+                              <stop offset="100%" stopColor="#34d399" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-5xl font-bold text-emerald-400">37%</span>
+                          <span className="text-sm text-gray-400">CO₂ Reduction</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Impact Cards with Icons */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="relative bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 rounded-2xl p-6 border border-emerald-500/30 hover:scale-105 transition-transform"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-emerald-500/20 rounded-xl">
+                            <svg className="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-3xl font-bold text-emerald-400">5,500</p>
+                            <p className="text-sm text-gray-300">Tons CO₂ Saved Daily</p>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="relative bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-2xl p-6 border border-blue-500/30 hover:scale-105 transition-transform"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-blue-500/20 rounded-xl">
+                            <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-3xl font-bold text-blue-400">80K</p>
+                            <p className="text-sm text-gray-300">Cars Off Road</p>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="relative bg-gradient-to-br from-purple-500/20 to-purple-600/10 rounded-2xl p-6 border border-purple-500/30 hover:scale-105 transition-transform"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-purple-500/20 rounded-xl">
+                            <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-3xl font-bold text-purple-400">12M</p>
+                            <p className="text-sm text-gray-300">Liters Fuel Saved</p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Environmental Impact */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">Annual Environmental Impact</h3>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-500/10 to-transparent rounded-xl">
+                    <div>
+                      <p className="text-lg font-semibold text-white">Trees Equivalent</p>
+                      <p className="text-sm text-gray-400">CO₂ absorption equivalent</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-3xl font-bold text-green-400">2.4M</p>
+                      <p className="text-xs text-gray-400">trees planted</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500/10 to-transparent rounded-xl">
+                    <div>
+                      <p className="text-lg font-semibold text-white">Clean Air Days</p>
+                      <p className="text-sm text-gray-400">Improved air quality</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-3xl font-bold text-blue-400">+85</p>
+                      <p className="text-xs text-gray-400">days per year</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500/10 to-transparent rounded-xl">
+                    <div>
+                      <p className="text-lg font-semibold text-white">Health Benefits</p>
+                      <p className="text-sm text-gray-400">Reduced respiratory issues</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-3xl font-bold text-purple-400">-23%</p>
+                      <p className="text-xs text-gray-400">hospital admissions</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+
+          {/* Route Optimization */}
+          {selectedMetric === 'routes' && (
+            <>
+              <motion.div
+                initial={{ opacity: 0, rotate: -5 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                transition={{ duration: 0.5 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">Route Time Optimization</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <RadarChart data={radarData}>
+                    <PolarGrid stroke="#333" />
+                    <PolarAngleAxis dataKey="route" stroke="#888" />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#888" />
+                    <Radar name="Current" dataKey="current" stroke="#FF4444" fill="#FF4444" fillOpacity={0.3} />
+                    <Radar name="Optimized" dataKey="optimized" stroke="#44FF44" fill="#44FF44" fillOpacity={0.3} />
+                    <Legend />
+                  </RadarChart>
+                </ResponsiveContainer>
+                <div className="mt-4 text-center">
+                  <p className="text-3xl font-bold text-gradient">50%</p>
+                  <p className="text-gray-400">Average Time Reduction</p>
+                </div>
+              </motion.div>
+
+              {/* Time Savings Calculator */}
+              <motion.div
+                initial={{ opacity: 0, rotate: 5 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="glass-effect rounded-3xl p-8"
+              >
+                <h3 className="text-2xl font-semibold mb-6 text-white">Personal Time Savings</h3>
+                <div className="space-y-6">
+                  <div className="text-center p-6 bg-gradient-to-r from-tech-purple/20 to-bangalore-blue/20 rounded-xl">
+                    <p className="text-5xl font-bold text-gradient mb-2">
+                      {routeOptimization.timeSavings.average}
+                    </p>
+                    <p className="text-gray-400">Minutes saved per trip</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-gray-800/50 rounded-xl text-center">
+                      <p className="text-2xl font-bold text-white">{routeOptimization.timeSavings.monthly}</p>
+                      <p className="text-xs text-gray-400">Hours saved monthly</p>
+                    </div>
+                    <div className="p-4 bg-gray-800/50 rounded-xl text-center">
+                      <p className="text-2xl font-bold text-white">240</p>
+                      <p className="text-xs text-gray-400">Hours saved yearly</p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                    <p className="text-green-400 font-semibold">That's 10 full days of your life back every year!</p>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
