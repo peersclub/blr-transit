@@ -58,6 +58,12 @@ export default function Home() {
               Transport
             </a>
             <a
+              href="/plan"
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Park & Ride
+            </a>
+            <a
               href="/it-hubs"
               className="text-gray-300 hover:text-white transition-colors"
             >

@@ -183,7 +183,7 @@ export default function SolutionPresentation() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-2xl font-bold text-tech-purple">
-                      {model.buses || model.vehicles || model.routes}
+                      {Number(model.buses || model.vehicles || ('routes' in model && model.routes) || 0)}
                     </p>
                     <p className="text-xs text-gray-500">
                       {model.buses ? 'Buses' : model.vehicles ? 'Vehicles' : 'Routes'}

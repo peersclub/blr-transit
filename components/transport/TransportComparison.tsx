@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   BarChart,
@@ -59,11 +59,11 @@ export default function TransportComparison() {
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [radarData, setRadarData] = useState<any[]>([]);
 
-  const routes = {
+  const routes = useMemo(() => ({
     short: { distance: 5, name: 'Short (5km)', example: 'Koramangala → HSR' },
     medium: { distance: 15, name: 'Medium (15km)', example: 'HSR → Electronic City' },
     long: { distance: 25, name: 'Long (25km)', example: 'Whitefield → Manyata' }
-  };
+  }), []);
 
   useEffect(() => {
     const route = routes[selectedRoute];
@@ -192,7 +192,7 @@ export default function TransportComparison() {
     setComparisonData(comparison);
     setMonthlyData(monthly);
     setRadarData(radar);
-  }, [selectedRoute]);
+  }, [selectedRoute, routes]);
 
   return (
     <div className="bg-gray-900 rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-8">

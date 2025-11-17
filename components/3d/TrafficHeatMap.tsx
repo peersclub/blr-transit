@@ -186,9 +186,8 @@ function TrafficFlowLine({ flow, isActive }: { flow: CommuterFlow; isActive: boo
   const fromLocation = [...residentialAreas, ...itHubs].find(loc => loc.name === flow.from);
   const toLocation = [...residentialAreas, ...itHubs].find(loc => loc.name === flow.to);
 
-  if (!fromLocation || !toLocation) return null;
-
   const { tubeGeometry, curve } = useMemo(() => {
+    if (!fromLocation || !toLocation) return { tubeGeometry: null, curve: null };
     const from = new THREE.Vector3(
       (fromLocation.coordinates.lng - 77.65) * 100,
       0.5,
@@ -227,7 +226,7 @@ function TrafficFlowLine({ flow, isActive }: { flow: CommuterFlow; isActive: boo
     flow.congestionLevel === 'medium' ? '#FFAA00' :
     '#00FF00';
 
-  if (!isActive) return null;
+  if (!tubeGeometry || !isActive) return null;
 
   return (
     <group>

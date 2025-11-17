@@ -788,7 +788,7 @@ export default function ITHubsSection() {
                   <h4 className="font-semibold text-white mb-3 capitalize">
                     {area.replace(/([A-Z])/g, ' $1').trim()}
                   </h4>
-                  {data.routes && (
+                  {'routes' in data && data.routes && (
                     <div className="flex flex-wrap gap-1 mb-2">
                       {data.routes.slice(0, 3).map((route, routeIdx) => (
                         <span
@@ -805,7 +805,7 @@ export default function ITHubsSection() {
                       )}
                     </div>
                   )}
-                  {data.airport && (
+                  {'airport' in data && data.airport && (
                     <div className="mt-2">
                       <p className="text-xs text-gray-400">Airport Routes</p>
                       <div className="flex gap-1 mt-1">

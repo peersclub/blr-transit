@@ -1,0 +1,548 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User roles enum
+enum UserRole {
+  USER
+  DRIVER
+  ADMIN
+  SUPER_ADMIN
+}
+
+// Verification status enum
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// Booking status enum
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+}
+
+// Payment status enum
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+// Vehicle type enum
+enum VehicleType {
+  FORCE_URBANIA
+  FORCE_TRAVELLER
+  URBANIA_EXECUTIVE
+  MINI_BUS
+}
+
+// Parking status enum
+enum ParkingStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  MAINTENANCE
+}
+
+// Company/Corporation for corporate users
+model Company {
+  id                String   @id @default(cuid())
+  name              String
+  corporateId       String   @unique
+  domain            String?  // Email domain for verification
+  address           String
+  city              String
+  state             String
+  pincode           String
+  contactPerson     String
+  contactEmail      String
+  contactPhone      String
+  gstNumber         String?
+  isActive          Boolean  @default(true)
+  discountPercent   Float    @default(0) // Corporate discount
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  users             User[]
+  invoices          Invoice[]
+}
+
+// Main User model
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  phone             String   @unique
+  phoneVerified     Boolean  @default(false)
+  phoneOTP          String?
+  phoneOTPExpiry    DateTime?
+  password          String
+  firstName         String
+  lastName          String
+  employeeId        String?  // Corporate employee ID
+  role              UserRole @default(USER)
+
+  // Corporate association
+  companyId         String?
+  company           Company? @relation(fields: [companyId], references: [id])
+
+  // Verification
+  verificationStatus VerificationStatus @default(PENDING)
+  verifiedAt        DateTime?
+  verificationDoc   String?  // URL to uploaded ID
+
+  // Profile
+  profilePicture    String?
+  homeAddress       String?
+  homeLatitude      Float?
+  homeLongitude     Float?
+  preferredPickup   String?
+  emergencyContact  String?
+
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  bookings          Booking[]
+  vehicles          UserVehicle[]
+  payments          Payment[]
+  notifications     Notification[]
+  feedbacks         Feedback[]
+}
+
+// Driver model (extends User)
+model Driver {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  licenseNumber     String   @unique
+  licenseExpiry     DateTime
+  licenseDoc       String   // URL to license document
+  aadharNumber      String
+  aadharDoc         String   // URL to aadhar document
+  panNumber         String?
+  address           String
+  city              String
+  state             String
+  pincode           String
+  bloodGroup        String?
+
+  // Driver metrics
+  totalTrips        Int      @default(0)
+  rating            Float    @default(5.0)
+  isAvailable       Boolean  @default(true)
+  currentLocation   String?
+  currentLatitude   Float?
+  currentLongitude  Float?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  trips             Trip[]
+  vehicleAssignments DriverVehicle[]
+}
+
+// Vehicle management
+model Vehicle {
+  id                String   @id @default(cuid())
+  registrationNo    String   @unique
+  type              VehicleType
+  make              String
+  model             String
+  year              Int
+  color             String
+  capacity          Int      // Number of seats
+
+  // Vehicle documents
+  rcDoc             String   // Registration certificate
+  insuranceDoc      String
+  insuranceExpiry   DateTime
+  fitnessDoc        String?
+  fitnessExpiry     DateTime?
+  permitDoc         String?
+  permitExpiry      DateTime?
+
+  // Vehicle status
+  isActive          Boolean  @default(true)
+  isAvailable       Boolean  @default(true)
+  lastService       DateTime?
+  nextService       DateTime?
+  totalKm           Float    @default(0)
+  fuelType          String
+  mileage           Float?   // km per liter
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  trips             Trip[]
+  driverAssignments DriverVehicle[]
+  maintenanceLogs   MaintenanceLog[]
+}
+
+// Driver-Vehicle assignment
+model DriverVehicle {
+  id                String   @id @default(cuid())
+  driverId          String
+  driver            Driver   @relation(fields: [driverId], references: [id])
+  vehicleId         String
+  vehicle           Vehicle  @relation(fields: [vehicleId], references: [id])
+  assignedDate      DateTime @default(now())
+  unassignedDate    DateTime?
+  isActive          Boolean  @default(true)
+
+  @@unique([driverId, vehicleId])
+}
+
+// User's personal vehicles for parking
+model UserVehicle {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  type              String   // Car, Bike, etc
+  registrationNo    String
+  make              String?
+  model             String?
+  color             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  parkingBookings   ParkingBooking[]
+}
+
+// Routes
+model Route {
+  id                String   @id @default(cuid())
+  name              String
+  code              String   @unique
+  startPoint        String
+  endPoint          String
+  distance          Float    // in km
+  estimatedTime     Int      // in minutes
+
+  // Route stops
+  stops             Json     // Array of stops with coordinates
+
+  // Pricing
+  basePrice         Float
+  pricePerKm        Float?
+  surgeMultiplier   Float    @default(1.0)
+
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  trips             Trip[]
+  pickupPoints      PickupPoint[]
+}
+
+// Pickup points for routes
+model PickupPoint {
+  id                String   @id @default(cuid())
+  routeId           String
+  route             Route    @relation(fields: [routeId], references: [id])
+  name              String
+  address           String
+  landmark          String?
+  latitude          Float
+  longitude         Float
+  type              String   // parking-hub, bus-stop, metro-station, home-pickup-zone
+
+  // Facilities
+  hasParkingHub     Boolean  @default(false)
+  parkingCapacity   Int      @default(0)
+  hasWaitingArea    Boolean  @default(false)
+  hasSecurity       Boolean  @default(false)
+
+  // Timings
+  morningSlots      Json     // Array of time slots
+  eveningSlots      Json     // Array of time slots
+
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  parkingSpaces     ParkingSpace[]
+  bookings          Booking[]
+}
+
+// Parking spaces management
+model ParkingSpace {
+  id                String   @id @default(cuid())
+  pickupPointId     String
+  pickupPoint       PickupPoint @relation(fields: [pickupPointId], references: [id])
+  spaceNumber       String
+  floor             String?
+  section           String?
+  type              String   // Compact, Standard, Large
+  status            ParkingStatus @default(AVAILABLE)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  parkingBookings   ParkingBooking[]
+
+  @@unique([pickupPointId, spaceNumber])
+}
+
+// Trips (scheduled bus services)
+model Trip {
+  id                String   @id @default(cuid())
+  routeId           String
+  route             Route    @relation(fields: [routeId], references: [id])
+  vehicleId         String
+  vehicle           Vehicle  @relation(fields: [vehicleId], references: [id])
+  driverId          String
+  driver            Driver   @relation(fields: [driverId], references: [id])
+
+  tripCode          String   @unique
+  departureTime     DateTime
+  estimatedArrival  DateTime
+  actualDeparture   DateTime?
+  actualArrival     DateTime?
+
+  // Capacity management
+  totalSeats        Int
+  availableSeats    Int
+
+  // Trip status
+  status            String   @default("SCHEDULED") // SCHEDULED, BOARDING, DEPARTED, IN_TRANSIT, ARRIVED, COMPLETED, CANCELLED
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  bookings          Booking[]
+  tripRevenue       TripRevenue?
+}
+
+// Booking model
+model Booking {
+  id                String   @id @default(cuid())
+  bookingCode       String   @unique
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  tripId            String
+  trip              Trip     @relation(fields: [tripId], references: [id])
+
+  // Pickup details
+  pickupPointId     String
+  pickupPoint       PickupPoint @relation(fields: [pickupPointId], references: [id])
+  pickupTime        DateTime
+
+  // Seat details
+  seatNumbers       Json     // Array of seat numbers
+  numberOfSeats     Int
+
+  // Home pickup if applicable
+  homePickup        Boolean  @default(false)
+  homePickupAddress String?
+  homePickupType    String?  // car, bike
+  homePickupCharge  Float    @default(0)
+
+  // Pricing
+  baseAmount        Float
+  discountAmount    Float    @default(0)
+  taxAmount         Float
+  totalAmount       Float
+
+  status            BookingStatus @default(PENDING)
+
+  // Timestamps
+  bookedAt          DateTime @default(now())
+  confirmedAt       DateTime?
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  cancellationReason String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  payment           Payment?
+  parkingBooking    ParkingBooking?
+  feedback          Feedback?
+}
+
+// Parking booking (linked to main booking)
+model ParkingBooking {
+  id                String   @id @default(cuid())
+  bookingId         String   @unique
+  booking           Booking  @relation(fields: [bookingId], references: [id])
+  userVehicleId     String
+  userVehicle       UserVehicle @relation(fields: [userVehicleId], references: [id])
+  parkingSpaceId    String
+  parkingSpace      ParkingSpace @relation(fields: [parkingSpaceId], references: [id])
+
+  checkInTime       DateTime?
+  checkOutTime      DateTime?
+  parkingFee        Float
+  status            String   @default("RESERVED") // RESERVED, CHECKED_IN, CHECKED_OUT
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Payment model
+model Payment {
+  id                String   @id @default(cuid())
+  bookingId         String   @unique
+  booking           Booking  @relation(fields: [bookingId], references: [id])
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  amount            Float
+  method            String   // UPI, Card, Wallet, Cash
+  transactionId     String?  @unique
+  gatewayResponse   Json?
+
+  status            PaymentStatus @default(PENDING)
+  paidAt            DateTime?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Revenue tracking per trip
+model TripRevenue {
+  id                String   @id @default(cuid())
+  tripId            String   @unique
+  trip              Trip     @relation(fields: [tripId], references: [id])
+
+  totalBookings     Int      @default(0)
+  totalSeatsBooked  Int      @default(0)
+
+  // Revenue breakdown
+  ticketRevenue     Float    @default(0)
+  parkingRevenue    Float    @default(0)
+  homePickupRevenue Float    @default(0)
+  totalRevenue      Float    @default(0)
+
+  // Costs
+  fuelCost          Float    @default(0)
+  driverCost        Float    @default(0)
+  maintenanceCost   Float    @default(0)
+  totalCost         Float    @default(0)
+
+  // Profit
+  grossProfit       Float    @default(0)
+  profitMargin      Float    @default(0) // Percentage
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Monthly revenue summary
+model MonthlyRevenue {
+  id                String   @id @default(cuid())
+  month             Int
+  year              Int
+
+  // Trips
+  totalTrips        Int      @default(0)
+  completedTrips    Int      @default(0)
+  cancelledTrips    Int      @default(0)
+
+  // Bookings
+  totalBookings     Int      @default(0)
+  totalPassengers   Int      @default(0)
+
+  // Revenue
+  ticketRevenue     Float    @default(0)
+  parkingRevenue    Float    @default(0)
+  homePickupRevenue Float    @default(0)
+  totalRevenue      Float    @default(0)
+
+  // Costs
+  totalCosts        Float    @default(0)
+  netProfit         Float    @default(0)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([month, year])
+}
+
+// Maintenance log for vehicles
+model MaintenanceLog {
+  id                String   @id @default(cuid())
+  vehicleId         String
+  vehicle           Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  type              String   // Service, Repair, Inspection
+  description       String
+  cost              Float
+  serviceCenter     String
+  startDate         DateTime
+  endDate           DateTime?
+  odometer          Float    // KM reading
+  nextServiceDue    Float?   // Next service at KM
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// Notifications
+model Notification {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  title             String
+  message           String
+  type              String   // BOOKING, TRIP, PAYMENT, SYSTEM
+  isRead            Boolean  @default(false)
+  readAt            DateTime?
+
+  createdAt         DateTime @default(now())
+}
+
+// Feedback
+model Feedback {
+  id                String   @id @default(cuid())
+  bookingId         String   @unique
+  booking           Booking  @relation(fields: [bookingId], references: [id])
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  rating            Int      // 1-5
+  driverRating      Int?     // 1-5
+  vehicleRating     Int?     // 1-5
+  comment           String?
+
+  createdAt         DateTime @default(now())
+}
+
+// Corporate invoices
+model Invoice {
+  id                String   @id @default(cuid())
+  invoiceNumber     String   @unique
+  companyId         String
+  company           Company  @relation(fields: [companyId], references: [id])
+
+  month             Int
+  year              Int
+
+  totalAmount       Float
+  discountAmount    Float
+  taxAmount         Float
+  finalAmount       Float
+
+  status            String   @default("PENDING") // PENDING, PAID, OVERDUE
+  dueDate           DateTime
+  paidDate          DateTime?
+
+  invoiceUrl        String?  // URL to PDF
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

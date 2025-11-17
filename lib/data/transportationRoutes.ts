@@ -145,6 +145,7 @@ export const transportModes: Record<string, TransportMode> = {
   personal: {
     type: 'personal',
     name: 'Personal Vehicle',
+    baseFare: 0,
     perKmRate: 8, // Fuel + maintenance
     avgSpeed: 17,
     comfort: 5,
