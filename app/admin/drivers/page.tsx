@@ -291,14 +291,14 @@ export default function DriversPage() {
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Available Drivers</div>
                     <div className="text-3xl font-bold text-green-400">
-                      {drivers.filter(d => d.isAvailable).length}
+                      {drivers.filter((d: any) => d.isAvailable).length}
                     </div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Average Rating</div>
                     <div className="text-3xl font-bold text-yellow-400">
                       {drivers.length > 0
-                        ? (drivers.reduce((sum, d) => sum + d.rating, 0) / drivers.length).toFixed(1)
+                        ? (drivers.reduce((sum: number, d: any) => sum + d.rating, 0) / drivers.length).toFixed(1)
                         : '0.0'
                       }
                     </div>

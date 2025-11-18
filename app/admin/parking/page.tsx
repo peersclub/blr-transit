@@ -323,19 +323,19 @@ export default function ParkingPage() {
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Available</div>
                     <div className="text-3xl font-bold text-green-400">
-                      {parkingSpaces.filter(s => s.status === 'AVAILABLE').length}
+                      {parkingSpaces.filter((s: any) => s.status === 'AVAILABLE').length}
                     </div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Occupied</div>
                     <div className="text-3xl font-bold text-red-400">
-                      {parkingSpaces.filter(s => s.status === 'OCCUPIED').length}
+                      {parkingSpaces.filter((s: any) => s.status === 'OCCUPIED').length}
                     </div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Reserved</div>
                     <div className="text-3xl font-bold text-yellow-400">
-                      {parkingSpaces.filter(s => s.status === 'RESERVED').length}
+                      {parkingSpaces.filter((s: any) => s.status === 'RESERVED').length}
                     </div>
                   </div>
                 </div>

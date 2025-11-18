@@ -351,21 +351,21 @@ export default function VehiclesPage() {
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Available</div>
                     <div className="text-3xl font-bold text-green-400">
-                      {vehicles.filter(v => v.isAvailable).length}
+                      {vehicles.filter((v: any) => v.isAvailable).length}
                     </div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Total Capacity</div>
                     <div className="text-3xl font-bold text-blue-400">
-                      {vehicles.reduce((sum, v) => sum + v.capacity, 0)}
+                      {vehicles.reduce((sum: number, v: any) => sum + v.capacity, 0)}
                     </div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Avg Mileage</div>
                     <div className="text-3xl font-bold text-yellow-400">
-                      {vehicles.filter(v => v.mileage).length > 0
-                        ? (vehicles.reduce((sum, v) => sum + (v.mileage || 0), 0) /
-                           vehicles.filter(v => v.mileage).length).toFixed(1)
+                      {vehicles.filter((v: any) => v.mileage).length > 0
+                        ? (vehicles.reduce((sum: number, v: any) => sum + (v.mileage || 0), 0) /
+                           vehicles.filter((v: any) => v.mileage).length).toFixed(1)
                         : '0.0'
                       } km/l
                     </div>

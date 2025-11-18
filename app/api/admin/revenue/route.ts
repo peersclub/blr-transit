@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate costs
     const totalCosts = tripRevenues.reduce(
-      (sum, tr) => sum + tr.totalCost,
+      (sum: number, tr: any) => sum + tr.totalCost,
       0
     );
 
@@ -179,21 +179,21 @@ export async function GET(request: NextRequest) {
       nextDate.setDate(nextDate.getDate() + 1);
 
       const dayBookings = bookings.filter(
-        (b) => new Date(b.createdAt) >= date && new Date(b.createdAt) < nextDate
+        (b: any) => new Date(b.createdAt) >= date && new Date(b.createdAt) < nextDate
       );
 
       const dayRevenue = {
         date: date.toISOString().split('T')[0],
-        ticketRevenue: dayBookings.reduce((sum, b) => sum + b.baseAmount - b.discountAmount, 0),
-        parkingRevenue: dayBookings.reduce((sum, b) => sum + (b.parkingBooking?.parkingFee || 0), 0),
-        homePickupRevenue: dayBookings.reduce((sum, b) => sum + b.homePickupCharge, 0),
+        ticketRevenue: dayBookings.reduce((sum: number, b: any) => sum + b.baseAmount - b.discountAmount, 0),
+        parkingRevenue: dayBookings.reduce((sum: number, b: any) => sum + (b.parkingBooking?.parkingFee || 0), 0),
+        homePickupRevenue: dayBookings.reduce((sum: number, b: any) => sum + b.homePickupCharge, 0),
         totalRevenue: 0,
         totalCost: 0,
         netProfit: 0,
         trips: trips.filter(
-          (t) => new Date(t.departureTime) >= date && new Date(t.departureTime) < nextDate
+          (t: any) => new Date(t.departureTime) >= date && new Date(t.departureTime) < nextDate
         ).length,
-        passengers: dayBookings.reduce((sum, b) => sum + b.numberOfSeats, 0),
+        passengers: dayBookings.reduce((sum: number, b: any) => sum + b.numberOfSeats, 0),
       };
 
       dayRevenue.totalRevenue =
@@ -215,7 +215,7 @@ export async function GET(request: NextRequest) {
         profitMargin,
         totalTrips: trips.length,
         totalBookings: bookings.length,
-        totalPassengers: bookings.reduce((sum, b) => sum + b.numberOfSeats, 0),
+        totalPassengers: bookings.reduce((sum: number, b: any) => sum + b.numberOfSeats, 0),
       },
       revenueBreakdown: {
         tickets: ticketRevenue,

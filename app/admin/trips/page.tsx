@@ -146,13 +146,13 @@ export default function TripsManagement() {
   };
 
   // Calculate summary stats
-  const todayRevenue = filteredTrips.reduce((sum, trip) => sum + calculateRevenue(trip), 0);
+  const todayRevenue = filteredTrips.reduce((sum: number, trip: any) => sum + calculateRevenue(trip), 0);
   const totalPassengers = filteredTrips.reduce(
-    (sum, trip) => sum + (trip.totalSeats - trip.availableSeats),
+    (sum: number, trip: any) => sum + (trip.totalSeats - trip.availableSeats),
     0
   );
   const avgOccupancy = filteredTrips.length > 0
-    ? (totalPassengers / filteredTrips.reduce((sum, trip) => sum + trip.totalSeats, 0)) * 100
+    ? (totalPassengers / filteredTrips.reduce((sum: number, trip: any) => sum + trip.totalSeats, 0)) * 100
     : 0;
   const onTimeRate = 94; // This could be calculated from actual data
 
@@ -317,7 +317,7 @@ export default function TripsManagement() {
               <div className="h-8 w-px bg-gray-700" />
               <div className="text-center">
                 <p className="text-2xl font-bold text-green-500">
-                  {filteredTrips.filter(t => t.status === 'ARRIVED').length}
+                  {filteredTrips.filter((t: any) => t.status === 'ARRIVED').length}
                 </p>
                 <p className="text-xs text-gray-400">Completed</p>
               </div>

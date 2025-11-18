@@ -285,19 +285,19 @@ export default function UsersPage() {
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Active Users</div>
                     <div className="text-3xl font-bold text-green-400">
-                      {users.filter(u => u.isActive).length}
+                      {users.filter((u: any) => u.isActive).length}
                     </div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Corporate Users</div>
                     <div className="text-3xl font-bold text-blue-400">
-                      {users.filter(u => u.company).length}
+                      {users.filter((u: any) => u.company).length}
                     </div>
                   </div>
                   <div>
                     <div className="text-gray-400 text-sm mb-2">Total Bookings</div>
                     <div className="text-3xl font-bold text-purple-400">
-                      {users.reduce((sum, u) => sum + u.totalBookings, 0)}
+                      {users.reduce((sum: number, u: any) => sum + u.totalBookings, 0)}
                     </div>
                   </div>
                 </div>
