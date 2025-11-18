@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
     let totalSeats = 0;
     let bookedSeats = 0;
 
-    occupancyData.forEach((trip) => {
+    occupancyData.forEach((trip: { totalSeats: number; availableSeats: number }) => {
       totalSeats += trip.totalSeats;
       bookedSeats += trip.totalSeats - trip.availableSeats;
     });
