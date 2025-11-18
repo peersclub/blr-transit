@@ -216,7 +216,7 @@ export async function GET(request: NextRequest) {
       totalDrivers,
       availableVehicles,
       occupancyRate,
-      recentBookings: recentBookings.map((booking) => ({
+      recentBookings: recentBookings.map((booking: any) => ({
         id: booking.id,
         bookingCode: booking.bookingCode,
         userName: `${booking.user.firstName} ${booking.user.lastName}`,
