@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    const routeRevenue = Array.from(routePerformance.values()).map((perf) => ({
+    const routeRevenue = Array.from(routePerformance.values()).map((perf: any) => ({
       ...perf,
       avgOccupancy: perf.totalSeats > 0 ? (perf.bookedSeats / perf.totalSeats) * 100 : 0,
       profitMargin: 35, // Placeholder - calculate based on actual costs
@@ -164,7 +164,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    const vehicleRevenue = Array.from(vehiclePerformance.values()).map((perf) => ({
+    const vehicleRevenue = Array.from(vehiclePerformance.values()).map((perf: any) => ({
       ...perf,
       profitability: perf.revenue - perf.fuelCost - perf.maintenanceCost,
     }));

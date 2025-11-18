@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add current booking info
-    const spacesWithDetails = parkingSpaces.map((space) => ({
+    const spacesWithDetails = parkingSpaces.map((space: any) => ({
       ...space,
       currentBooking: space.parkingBookings[0] || null,
     }));

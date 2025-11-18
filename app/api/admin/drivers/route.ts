@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate stats for each driver
-    const driversWithStats = drivers.map((driver) => ({
+    const driversWithStats = drivers.map((driver: any) => ({
       ...driver,
       upcomingTrips: driver.trips.length,
       assignedVehicle: driver.vehicleAssignments[0]?.vehicle || null,

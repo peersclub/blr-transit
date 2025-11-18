@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add stats
-    const usersWithStats = users.map((user) => ({
+    const usersWithStats = users.map((user: any) => ({
       ...user,
       totalBookings: user.bookings.length,
     }));

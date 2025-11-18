@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate stats for each vehicle
-    const vehiclesWithStats = vehicles.map((vehicle) => ({
+    const vehiclesWithStats = vehicles.map((vehicle: any) => ({
       ...vehicle,
       upcomingTrips: vehicle.trips.length,
       assignedDriver: vehicle.driverAssignments[0]?.driver || null,
