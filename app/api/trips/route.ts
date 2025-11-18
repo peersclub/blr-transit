@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate available seats for each trip
-    const tripsWithAvailability = trips.map(trip => {
+    const tripsWithAvailability = trips.map((trip: any) => {
       const bookedSeats = trip.bookings.reduce(
         (sum: number, booking: any) => sum + booking.numberOfSeats,
         0
