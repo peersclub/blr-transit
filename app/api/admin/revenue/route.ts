@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     let parkingRevenue = 0;
     let homePickupRevenue = 0;
 
-    bookings.forEach((booking) => {
+    bookings.forEach((booking: any) => {
       ticketRevenue += booking.baseAmount - booking.discountAmount;
       homePickupRevenue += booking.homePickupCharge;
       if (booking.parkingBooking) {
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
     // Route performance
     const routePerformance = new Map();
 
-    trips.forEach((trip) => {
+    trips.forEach((trip: any) => {
       const routeId = trip.route.id;
       if (!routePerformance.has(routeId)) {
         routePerformance.set(routeId, {
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
     // Vehicle performance
     const vehiclePerformance = new Map();
 
-    trips.forEach((trip) => {
+    trips.forEach((trip: any) => {
       const vehicleId = trip.vehicle.id;
       if (!vehiclePerformance.has(vehicleId)) {
         vehiclePerformance.set(vehicleId, {
