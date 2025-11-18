@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const bookingCode = `BLR${Date.now().toString().slice(-6)}`;
 
     // Start a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Get trip details
       const trip = await tx.trip.findUnique({
         where: { id: body.tripId },
@@ -244,7 +244,7 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const { bookingId, cancellationReason } = body;
 
-    const booking = await prisma.$transaction(async (tx) => {
+    const booking = await prisma.$transaction(async (tx: any) => {
       // Update booking status
       const updatedBooking = await tx.booking.update({
         where: { id: bookingId },
