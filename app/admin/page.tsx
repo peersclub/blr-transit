@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { api, useApi } from '@/lib/api';
+import RealTimeTripMonitor from '@/components/booking/RealTimeTripMonitor';
 
 interface DashboardMetrics {
   totalUsers: number;
@@ -290,6 +291,11 @@ export default function AdminDashboard() {
               </motion.div>
             ))}
           </AnimatePresence>
+        </div>
+
+        {/* Real-Time Trip Monitor */}
+        <div className="mb-8">
+          <RealTimeTripMonitor />
         </div>
 
         {/* Charts Row */}
