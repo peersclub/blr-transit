@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import HeroSection from '@/components/sections/HeroSection';
 import DataVisualization from '@/components/sections/DataVisualization';
 import SolutionPresentation from '@/components/sections/SolutionPresentation';
@@ -82,9 +83,12 @@ export default function Home() {
               Get Involved
             </a>
           </div>
-          <button className="px-6 py-2 bg-gradient-to-r from-tech-purple to-bangalore-blue text-white rounded-full font-semibold hover:opacity-90 transition-opacity">
+          <Link
+            href="/contact"
+            className="px-6 py-2 bg-gradient-to-r from-tech-purple to-bangalore-blue text-white rounded-full font-semibold hover:opacity-90 transition-opacity"
+          >
             Contact Us
-          </button>
+          </Link>
         </div>
       </motion.nav>
 

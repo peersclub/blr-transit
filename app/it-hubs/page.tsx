@@ -81,9 +81,12 @@ export default function ITHubsPage() {
               Get Involved
             </Link>
           </div>
-          <button className="px-6 py-2 bg-gradient-to-r from-tech-purple to-bangalore-blue text-white rounded-full font-semibold hover:opacity-90 transition-opacity">
+          <Link
+            href="/contact"
+            className="px-6 py-2 bg-gradient-to-r from-tech-purple to-bangalore-blue text-white rounded-full font-semibold hover:opacity-90 transition-opacity"
+          >
             Contact Us
-          </button>
+          </Link>
         </div>
       </motion.nav>
 
