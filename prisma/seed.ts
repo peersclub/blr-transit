@@ -1,10 +1,26 @@
 import { PrismaClient, UserRole, VehicleType, VerificationStatus } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
+/**
+ * BLR Transit Database Seed File
+ * ===============================
+ * This file contains DEMO/DEVELOPMENT data only.
+ * All personal information is fictional and for testing purposes.
+ *
+ * DO NOT use this data in production.
+ * Real user data should come from actual registrations.
+ *
+ * Demo accounts created:
+ * - Admin: admin@blrtransit.com / password123
+ * - Driver: ramesh.driver@blrtransit.com / password123
+ * - User: anita.patel@infosys.com / password123
+ */
+
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seed...');
+  console.log('🌱 Starting database seed with DEMO data...');
+  console.log('⚠️  Note: All data is fictional for development/testing only');
 
   // Clear existing data (in reverse order of dependencies)
   console.log('🗑️  Clearing existing data...');

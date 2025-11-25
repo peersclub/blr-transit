@@ -28,8 +28,8 @@ export default function AddVehicleForm({ isOpen, onClose, onSuccess }: AddVehicl
     permitExpiry: '',
     fuelType: '',
     mileage: '',
-    rcDoc: 'placeholder.pdf',
-    insuranceDoc: 'placeholder.pdf',
+    rcDoc: '', // Will be set after document upload
+    insuranceDoc: '', // Will be set after document upload
     fitnessDoc: '',
     permitDoc: '',
   });
@@ -116,8 +116,8 @@ export default function AddVehicleForm({ isOpen, onClose, onSuccess }: AddVehicl
           permitExpiry: '',
           fuelType: '',
           mileage: '',
-          rcDoc: 'placeholder.pdf',
-          insuranceDoc: 'placeholder.pdf',
+          rcDoc: '', // Will be set after document upload
+          insuranceDoc: '', // Will be set after document upload
           fitnessDoc: '',
           permitDoc: '',
         });

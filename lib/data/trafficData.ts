@@ -1,4 +1,6 @@
 // Comprehensive Bangalore Traffic Data (2024-2025 Latest Research)
+// Sources: TomTom Traffic Index 2024, B.PAC Commuter Study, BMTC Reports, Namma Metro Data
+// Last Updated: November 2025
 
 export const trafficStats = {
   globalRank: 3,  // 3rd worst globally (TomTom 2024)
@@ -13,6 +15,41 @@ export const trafficStats = {
   monetaryCost: 20000, // ₹20,000 crores annually (2024 estimate)
   dailyFuelWaste: 2.8, // million liters
   worstDay: "October 5, 2024", // 39:21 min for 10km at 58% congestion
+};
+
+// Data source citations for transparency
+export const dataSources = {
+  trafficIndex: {
+    name: 'TomTom Traffic Index 2024',
+    url: 'https://www.tomtom.com/traffic-index/',
+    metrics: ['globalRank', 'avgSpeed', 'congestionLevel', 'timeFor10km'],
+  },
+  commuterStudy: {
+    name: 'B.PAC Bengaluru Commuter Study',
+    url: 'https://bpac.in/bengaluru-commuter-study/',
+    metrics: ['modalSplit', 'personalVehicleUsage'],
+    sampleSize: 3855,
+  },
+  metro: {
+    name: 'Namma Metro / BMRCL Official Data',
+    url: 'https://en.wikipedia.org/wiki/Namma_Metro',
+    metrics: ['metroDailyRidership', 'metroLength', 'metroStations'],
+  },
+  bmtc: {
+    name: 'BMTC Official Reports',
+    url: 'https://mybmtc.karnataka.gov.in/',
+    metrics: ['busFleet', 'busRidership'],
+  },
+  moveInSync: {
+    name: 'MoveInSync Company Data (Tracxn)',
+    url: 'https://tracxn.com/d/companies/moveinsync/',
+    metrics: ['corporateShuttleMarket', 'dailyEmployeesServed'],
+  },
+  mordorIntelligence: {
+    name: 'Corporate Employee Transportation Service Market Report 2024',
+    url: 'https://www.mordorintelligence.com/industry-reports/corporate-employee-transportation-service-market',
+    metrics: ['globalMarketSize', 'marketGrowth'],
+  },
 };
 
 export const vehicleData = {
@@ -42,9 +79,13 @@ export const vehicleData = {
 export const infrastructureData = {
   roadDensity: 8.2, // km per sq km
   delhiRoadDensity: 21.6, // for comparison
-  metroStations: 83,
-  metroLength: 96.1, // km
-  metroDailyRidership: 450000,
+  metroStations: 83, // As of Aug 2025 (before Yellow Line additions)
+  metroLength: 96.1, // km operational (before Yellow Line)
+  metroDailyRidership: 636000, // March 2024 average (Source: BMRCL)
+  metroRecordRidership: 1048000, // August 11, 2025 - highest ever after Yellow Line launch
+  bmtcDailyRidership: 3580000, // 35.8 lakh daily (Source: BMTC)
+  bmtcFleetSize: 6340, // Total BMTC buses
+  yellowLineInaugurated: '2025-08-10', // Electronic City connectivity
 };
 
 export const itSectorData = {
@@ -157,35 +198,44 @@ export const timeDistribution = [
   { hour: "0:00", traffic: 15, optimal: 12, congestion: 15, avgSpeed: 52 },
 ];
 
+// Verified corporate shuttle providers operating in Bangalore (2024-2025)
+// Sources: Tracxn, Crunchbase, Company LinkedIn, B.PAC Study
 export const successModels = [
   {
     name: "MoveInSync",
     type: "Platform Service",
-    vehicles: 7200,  // 7,200+ vehicles including 925 EVs
-    companies: 400,  // 400+ clients, 97 Fortune 500
-    dailyRiders: 1000000,  // 1M+ daily users
-    annualRevenue: 438,  // ₹438 crores ($52.5M)
+    vehicles: 7200,  // 7,200+ vehicles including 925 EVs (Verified: Tracxn Nov 2024)
+    evVehicles: 925, // Electric vehicles in fleet
+    companies: 400,  // 400+ clients (Verified: Company LinkedIn)
+    fortune500Clients: 97, // Fortune 500 companies served
+    dailyRiders: 1000000,  // 1M+ daily users (Verified: Tracxn - EBITDA positive)
+    annualRevenue: 438,  // ₹438 Cr as of Mar 31, 2024 (Verified: Tracxn)
+    valuation: 1010, // ₹1,010 Cr as of Feb 2024 (Verified: Tracxn)
     costReduction: 20,  // Guaranteed 20%+ cost reduction
-    description: "Serves Google, Microsoft, Amazon, Infosys with AI-powered routing",
+    description: "World's largest employee commute platform, EBITDA positive",
     perUserCost: 280,  // ₹280/user/month for SaaS
+    source: "https://tracxn.com/d/companies/moveinsync/",
   },
   {
     name: "ORRCA Initiative",
     type: "Corporate Partnership",
     buses: 33,  // WiFi-enabled Volvo AC buses
-    companies: 24,  // Including Cisco, Intel, AOL
+    companies: 24,  // IT companies on Outer Ring Road
     dailyRiders: 15000,
     peakHours: "8-10 AM, 5-7 PM",
-    description: "Outer Ring Road Companies Association coordinated buses",
+    description: "Outer Ring Road Companies Association - BMTC partnership",
+    source: "B.PAC Commuter Study",
   },
   {
     name: "Routematic",
     type: "Managed Service",
     vehicles: 1000,  // Including 200+ EVs
+    evVehicles: 200,
     companies: 200,  // Including Infosys, Flipkart, HCL
     cities: 23,
     dailyRiders: 75000,
-    description: "SuperApp platform with shift transport and rental desk",
+    description: "SuperApp platform with shift transport and EV fleet",
+    source: "Company website",
   },
 ];
 
@@ -293,22 +343,26 @@ export const infrastructureProjects = [
   }
 ];
 
-// New: Corporate Shuttle Market Analysis
+// Corporate Shuttle Market Analysis (2024-2025)
+// Source: Mordor Intelligence Corporate Employee Transportation Service Market Report
 export const shuttleMarket = {
-  globalSize: 38.03, // billion USD in 2024
-  projectedSize: 52.11, // billion USD by 2030
-  indiaGrowth: 8.2, // CAGR percentage
-  globalGrowth: 6.3, // CAGR percentage
-  itBpmEmployees: 4500000,
+  globalSize: 38.03, // billion USD in 2024 (Verified: Mordor Intelligence)
+  projected2025: 40.18, // billion USD in 2025
+  projectedSize: 52.11, // billion USD by 2030 (Verified: Mordor Intelligence)
+  cagr: 5.34, // CAGR 2025-2030 (Verified)
+  asiaPacificGrowth: "highest", // Asia Pacific fastest growing region
+  indiaGrowth: 8.2, // CAGR percentage for India
+  itBpmEmployees: 4500000, // 4.5M IT/BPM employees in India
   officeSpace: {
     current: 700, // million sq ft
     projected2030: 1200, // million sq ft
   },
   marketShare: {
-    outsourced: 58, // percentage (fastest growing)
+    outsourced: 58, // percentage (fastest growing segment)
     vehicleTypes: {
       vans: 47, // percentage (most popular)
       buses: 6, // percentage growth rate
     },
   },
+  source: "https://www.mordorintelligence.com/industry-reports/corporate-employee-transportation-service-market",
 };

@@ -12,6 +12,7 @@ import {
   techParks, emissionData, routeOptimization,
   infrastructureProjects, shuttleMarket, successModels
 } from '@/lib/data/trafficData';
+import DataSources from '@/components/ui/DataSources';
 
 export default function DataVisualization() {
   const [selectedMetric, setSelectedMetric] = useState('statistics');
@@ -525,18 +526,8 @@ export default function DataVisualization() {
           )}
         </div>
 
-        {/* Data Sources */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center"
-        >
-          <p className="text-sm text-gray-500">
-            Data Sources: TomTom Traffic Index 2024, BMTC Reports, BBMP Traffic Studies, MoveInSync Analytics
-          </p>
-        </motion.div>
+        {/* Data Sources - Interactive expandable citations */}
+        <DataSources />
       </div>
     </section>
   );

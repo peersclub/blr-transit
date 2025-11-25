@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:socket": "tsx server.ts",
     "build": "DATABASE_URL=\"postgresql://user:pass@localhost:5432/db?schema=public\" prisma generate && next build",
     "start": "next start",
+    "start:socket": "NODE_ENV=production tsx server.ts",
     "lint": "next lint",
     "seed": "tsx prisma/seed.ts",
     "postinstall": "DATABASE_URL=\"postgresql://user:pass@localhost:5432/db?schema=public\" prisma generate"
@@ -48,6 +50,8 @@
     "react-phone-input-2": "^2.15.1",
     "recharts": "^2.15.4",
     "smoothscroll-polyfill": "^0.4.4",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "three": "^0.160.0",
     "twilio": "^5.10.5",
     "typescript": "5.2.2",
