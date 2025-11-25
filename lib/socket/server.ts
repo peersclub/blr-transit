@@ -150,7 +150,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
 
     socket.on('disconnect', () => {
       // Clean up driver connection
-      for (const [driverId, socketId] of connectedDrivers.entries()) {
+      for (const [driverId, socketId] of Array.from(connectedDrivers.entries())) {
         if (socketId === socket.id) {
           connectedDrivers.delete(driverId);
           console.log(`[Socket] Driver ${driverId} disconnected`);
@@ -159,7 +159,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketIOServer {
       }
 
       // Clean up trip subscriptions
-      for (const [tripId, sockets] of tripSubscriptions.entries()) {
+      for (const [tripId, sockets] of Array.from(tripSubscriptions.entries())) {
         sockets.delete(socket.id);
       }
 

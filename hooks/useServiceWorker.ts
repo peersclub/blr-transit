@@ -134,7 +134,7 @@ export function useServiceWorker() {
     try {
       const subscription = await state.registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        applicationServerKey: vapidPublicKey,
       });
 
       console.log('[SW] Push subscription:', subscription);
@@ -151,20 +151,6 @@ export function useServiceWorker() {
     requestNotificationPermission,
     subscribeToPush,
   };
-}
-
-// Helper function to convert VAPID key
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-
-  return outputArray;
 }
 
 export default useServiceWorker;

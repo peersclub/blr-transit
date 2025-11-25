@@ -305,7 +305,7 @@ export function useAdminDashboard() {
     };
 
     const handleDriverOnline = (data: { driverId: string }) => {
-      setOnlineDrivers((prev) => [...new Set([...prev, data.driverId])]);
+      setOnlineDrivers((prev) => Array.from(new Set([...prev, data.driverId])));
     };
 
     const handleDriverOffline = (data: { driverId: string }) => {
